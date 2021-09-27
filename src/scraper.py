@@ -28,20 +28,11 @@ def get_csv(year, sex, age_class='%', results_per_page=100) -> str:
         document = parse_html(url)
         n = int(document.select_one(
             'li.hidden-xs:nth-child(5) > a:nth-child(1)').text)
-        first = document.select(
-            'li.list-group-item > div.list-field-wrap > div.row')
-        second = document.select(
-            'li.list-group-item > div.list-field-wrap > div.pull-left > div.row')
-        third = document.select(
-            'li.list-group-item > div.list-field-wrap > div.pull-right > div.row')
-        frame = []
 
         with open(filepath, 'w') as file:
             csv_writer = csv.writer(file, delimiter=DELIMITER)
             for i in range(1, n + 1):
                 print(get_url(year, i, results_per_page, sex, age_class))
-                document = parse_html(
-                    get_url(year, i, results_per_page, sex, age_class))
                 first = document.select(
                     'li.list-group-item > div.list-field-wrap > div.row')
                 second = document.select(
@@ -62,8 +53,11 @@ def get_csv(year, sex, age_class='%', results_per_page=100) -> str:
                                 line.append(labels[0])
                     csv_writer.writerow(line)
                     print(line)
+                if i != n:
+                    document = parse_html(
+                        get_url(year, i + 1, results_per_page, sex, age_class))
     return filepath
 
 
 if __name__ == '__main__':
-    get_csv(2019, 'M')
+    get_csv(2018, 'W')
